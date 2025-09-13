@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SIP Calculator | Eagle</title>
+  <link rel="stylesheet" href="style.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    /* Added missing styles to match original */
+    .calculator {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+    
+    .calculator-form {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: #333;
+      font-weight: 500;
+    }
+    
+    .form-group input {
+      width: 100%;
+      padding: 0.8rem;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+    
+    .cta-btn {
+      padding: 1rem 2rem;
+      border-radius: 6px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .cta-btn.primary {
+      background-color: #2563eb;
+      color: white;
+      border: none;
+    }
+    
+    .calculator-results {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .result-card {
+      margin-bottom: 2rem;
+    }
+    
+    .result-row {
+      display: flex;
+      justify-content: space-between;
+      margin: 1rem 0;
+      padding: 0.8rem 0;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .result-row.highlight {
+      font-weight: 600;
+      color: #2563eb;
+      border-bottom: none;
+    }
+  </style>
+</head>
+<body>
+
+  <nav id="navbar">
+    <div class="container">
+      <div class="logo">EAGLE</div>
+      <div class="nav-links">
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="prediction.html">Predictions</a></li>
+          <li><a href="sipCalc.html" class="active">SIP Calculator</a></li>
+          <li><a href="#">Portfolio</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <main class="sip-container">
+    <div class="container">
+      <h1>SIP Calculator</h1>
+      <p class="subtitle">Calculate your potential returns from Systematic Investment Plans</p>
+      
+      <div class="calculator">
+        <div class="calculator-form">
+          <div class="form-group">
+            <label for="sipAmount">Monthly Investment (₹)</label>
+            <input type="number" id="sipAmount" min="500" step="500" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="years">Investment Period (years)</label>
+            <input type="number" id="years" min="1" max="30" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="annualRate">Expected Return (% p.a.)</label>
+            <input type="number" id="annualRate" min="1" max="30" step="0.1" required>
+          </div>
+          
+          <button type="button" onclick="handleSIP()" class="cta-btn primary">Calculate</button>
+        </div>
+        
+        <div class="calculator-results">
+          <div class="result-card">
+            <h3>Investment Summary</h3>
+            <div class="result-row">
+              <span>Total Investment</span>
+              <span id="totalInvestment">-</span>
+            </div>
+            <div class="result-row">
+              <span>Estimated Returns</span>
+              <span id="estimatedReturns">-</span>
+            </div>
+            <div class="result-row highlight">
+              <span>Total Value</span>
+              <span id="totalValue">-</span>
+            </div>
+          </div>
+          
+          <div class="chart-container">
+            <canvas id="sipChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    let sipChart;
+
+    function calculateSIPBreakdown(P, annualRate, years) {
+      const r = annualRate / 12 / 100;
+      const n = years * 12;
+      let totalInvestment = 0;
+      let values = [];
+      let labels = [];
+      let total = 0;
+
+      for (let i = 1; i <= n; i++) {
+        totalInvestment += P;
+        total = total * (1 + r) + P;
+        if (i % 12 === 0 || i === n) {
+          labels.push(`${i / 12}y`);
+          values.push(total);
+        }
+      }
+      return { 
+        totalInvestment,
+        estimatedReturns: total - totalInvestment,
+        finalValue: total,
+        values, 
+        labels 
+      };
+    }
+
+    function handleSIP() {
+      const P = parseFloat(document.getElementById('sipAmount').value);
+      const annualRate = parseFloat(document.getElementById('annualRate').value);
+      const years = parseInt(document.getElementById('years').value);
+
+      if (isNaN(P) || isNaN(annualRate) || isNaN(years)) {
+        alert("Please fill all fields correctly.");
+        return;
+      }
+
+      const { 
+        totalInvestment, 
+        estimatedReturns, 
+        finalValue, 
+        values, 
+        labels 
+      } = calculateSIPBreakdown(P, annualRate, years);
+
+      // Update results
+      document.getElementById('totalInvestment').textContent = `₹${totalInvestment.toLocaleString()}`;
+      document.getElementById('estimatedReturns').textContent = `₹${estimatedReturns.toLocaleString(undefined, { maximumFractionDigits: 2 })}`;
+      document.getElementById('totalValue').textContent = `₹${finalValue.toLocaleString(undefined, { maximumFractionDigits: 2 })}`;
+
+      // Update chart
+      const ctx = document.getElementById('sipChart').getContext('2d');
+      if (sipChart) sipChart.destroy();
+
+      sipChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Portfolio Value',
+            data: values,
+            borderColor: '#10b981',
+            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+            tension: 0.4,
+            fill: true,
+            pointRadius: 3
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            title: { 
+              display: true, 
+              text: 'Growth Projection', 
+              font: { size: 16 } 
+            }
+          },
+          scales: {
+            x: { grid: { display: false }},
+            y: { 
+              grid: { color: '#e2e8f0' },
+              ticks: {
+                callback: value => `₹${Number(value).toLocaleString()}`
+              }
+            }
+          }
+        }
+      });
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Advanced NAV Predictor | Eagle</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+</head>
+<body>
+    <nav id="navbar">
+        <div class="container">
+            <div class="logo">EAGLE</div>
+            <div class="nav-links">
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="prediction.html" class="active">Predictions</a></li>
+                    <li><a href="sipCalc.html">SIP Calculator</a></li>
+                    <li><a href="#">Portfolio</a></li>
+                </ul>
+            </div>
+            <div class="mobile-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="prediction-container">
+        <div class="container">
+            <h1>Advanced NAV Predictor</h1>
+            <p class="subtitle">Our AI-powered predictions analyze multiple factors to guide your investment decisions</p>
+            
+            <div class="prediction-content">
+                <div class="chart-section">
+                    <div class="chart-header">
+                        <select id="fundSelector" class="fund-selector">
+                            <option value="">Select Fund</option>
+                        </select>
+                        <div class="time-range">
+                            <button class="time-btn active" data-range="1m">1M</button>
+                            <button class="time-btn" data-range="3m">3M</button>
+                            <button class="time-btn" data-range="6m">6M</button>
+                            <button class="time-btn" data-range="1y">1Y</button>
+                            <button class="time-btn" data-range="all">All</button>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="navChart"></canvas>
+                    </div>
+                    <div class="prediction-notes">
+                        <div class="confidence-meter">
+                            <span>Prediction Confidence:</span>
+                            <div class="meter-bar">
+                                <div class="meter-fill" id="confidenceLevel"></div>
+                            </div>
+                            <span id="confidenceValue">75%</span>
+                        </div>
+                        <p id="predictionInsight">Based on historical performance and current market trends</p>
+                    </div>
+                </div>
+                
+                <div class="prediction-details">
+                    <div class="detail-card">
+                        <h3>Fund Details</h3>
+                        <div class="detail-row">
+                            <span>Fund Start Date</span>
+                            <span id="outputStart">-</span>
+                        </div>
+                        <div class="detail-row">
+                            <span>Current NAV</span>
+                            <span id="outputPrice">-</span>
+                        </div>
+                        <div class="detail-row">
+                            <span>1Y Return</span>
+                            <span id="outputReturn">-</span>
+                        </div>
+                        <div class="detail-row">
+                            <span>Risk Level</span>
+                            <span id="outputRisk">-</span>
+                        </div>
+                    </div>
+                    
+                    <div class="advice-card">
+                        <h3>Eagle Recommendation</h3>
+                        <div class="advice-content" id="outputAdvice">
+                            <div class="advice-icon">💡</div>
+                            <div class="advice-text">Select a fund to see our prediction</div>
+                        </div>
+                        <div class="predicted-value">
+                            <span>Predicted Next NAV:</span>
+                            <span id="predictedNav">-</span>
+                        </div>
+                    </div>
+                    
+                    <div class="factors-card">
+                        <h3>Key Prediction Factors</h3>
+                        <ul id="predictionFactors">
+                            <li>Historical NAV trend</li>
+                            <li>Market indicators</li>
+                            <li>Fund performance</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
