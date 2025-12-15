@@ -437,7 +437,7 @@ img {
   box-shadow: var(--shadow-md);
 }
 
-detail-card h3, .advice-card h3, .factors-card h3 {
+.detail-card h3, .advice-card h3, .factors-card h3 {
   margin-bottom: 1rem;
   color: var(--primary);
   font-size: 1.2rem;
